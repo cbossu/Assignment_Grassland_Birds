@@ -1,0 +1,25 @@
+# FEEMS / FEEMSmix environment, pinned to versions that actually work together (Oct 2026).
+#   micromamba env create -f feems_env.yml   (or conda/mamba)
+#
+# Pins and why:
+#   numpy<2            feems 2.0.1 requires it
+#   scikit-sparse<0.5  0.5.0 changed the CHOLMOD API -> "TypeError: 'tuple' object is not callable"
+#   tskit<0.6          newer builds are compiled against numpy 2 -> "numpy._core.multiarray failed to import"
+#
+# Also: the feems package (bioconda AND pip) ships WITHOUT grid_250.shp and grid_500.shx.
+# Clone the repo once and point --grid at its copy:
+#   git clone https://github.com/NovembreLab/feems $HOME/software/feems
+#   --grid $HOME/software/feems/feems/data/grid_250.shp
+name: feems_e
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - feems=2.0.1
+  - numpy<2
+  - scikit-sparse<0.5
+  - tskit<0.6
+  - pandas-plink
+  - plink
+  - bcftools
