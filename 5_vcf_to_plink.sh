@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Beagle-imputed, FST-outlier-subset VCF -> PLINK bed for FEEMS.
-# Usage: bash 01_vcf_to_plink.sh LOSH_fstoutliers.vcf.gz meta.csv LOSH_fst
-# Usage: bash 01_vcf_to_plink.sh fst_splits/rep01/LOSH_topfst.vcf.gz LOSH.feems_meta.csv LOSH.top_pairwiseFST
-# Usage: bash 01_vcf_to_plink.sh LOSH.top_pairwiseFST.second.vcf.gz  LOSH.feems_meta.csv LOSH.top_pairwiseFST.second
-# Usage: bash 01_vcf_to_plink.sh losh.impute3.balanced.filtered.rm_hiMissingBr.vcf.gz LOSH.feems_meta.csv  losh.impute3.balanced.filtered.rm_hiMissingBr.all 
+
+# Usage: bash 5_vcf_to_plink.sh output/fst_splits/rep01/LOSH_topfst.vcf.gz input/feems/LOSH.feems_meta.csv input/feems/LOSH.top_pairwiseFST.second
+
 set -euo pipefail
 VCF=$1        # imputed VCF with breeding + nonbreeding birds
 META=$2       # sample_id,group,lon,lat

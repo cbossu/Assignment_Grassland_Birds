@@ -21,10 +21,10 @@
 # -----------------------------------------------------------------------------
 
 ## ---- settings ---------------------------------------------------------------
-pop_dir     <- "pops"            # folder of per-population ID files
+pop_dir     <- "input/pops"            # folder of per-population ID files
 pop_pattern <- "\\.ind.txt$"         # which files to read
 out_dir     <- "output/fst_splits"
-vcf         <- "output/imputation/losh.impute3.filtered.annotated.vcf.gz"  # full imputed VCF (NOT the outlier subset)
+vcf         <- "input/pairwiseFST/losh.impute3.filtered.vcf.gz"  # full imputed VCF (NOT the outlier subset)
 scheme      <- "kfold"           # "kfold" or "random"
 k           <- 10                # folds (kfold) -> 90% train
 n_rep       <- 2                 # replicates (random)

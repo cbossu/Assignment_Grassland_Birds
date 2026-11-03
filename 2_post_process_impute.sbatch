@@ -31,7 +31,7 @@
 set -x
 
 source ~/.bashrc
-conda activate imputation
+conda activate feems_e
 
 
 python scripts/filter_gprobs_by_r2.py \
@@ -40,11 +40,34 @@ python scripts/filter_gprobs_by_r2.py \
         --min-r2 0.6 \
         --out-gprobs output/imputation/losh.impute3.filtered.gprobs.gz \
         --hard-calls output/imputation/losh.impute3.filtered.geno.tsv.gz \
-        --vcf output/imputation/losh.impute3.filtered.vcf.gz \
+        --vcf output/imputation/losh.impute3.filtered.vcf \
         --min-call-prob 0.8 \
         --sample-names input/samples.txt          # optional, one ID per column, in order
         
-## Annotate the vcf file
 conda activate bcftools
-bcftools annotate --set-id '%CHROM\:%POS'  output/imputation/losh.impute3.filtered.vcf.gz \
-  -Oz -o input/pairwiseFST/losh.impute3.filtered.annotated.vcf.gz
+mkdir input/pairwiseFST/
+
+## Remove one duplicated individual
+bcftools view -Oz -o input/pairwiseFST/losh.impute3.filtered.vcf.gz  -s ^21N02103b --threads 4 output/imputation/losh.impute3.filtered.vcf
+tabix -p vcf input/pairwiseFST/losh.impute3.filtered.vcf.gz
+rm output/imputation/losh.impute3.filtered.vcf
+
+## Split population into train (90%) and test (10%) versions
+conda activate R-GEA2
+Rscript 3_split_train_test_fst.R
+
+## Pairwise fst between groups in pop folder
+conda activate bcftools
+bash output/fst_splits/rep01/run_fst.sh
+
+# Select top outlier variatns amongst all pairwise-FST analyses
+conda activate R-GEA2
+Rscript 4_select_top_fst.R output/fst_splits/rep01
+
+
+## Subset to outlier loci
+conda activate bcftools
+ bcftools view -T output/fst_splits/rep01/top_fst_positions.train.txt input/pairwiseFST/losh.impute3.filtered.vcf.gz -Oz -o output/fst_splits/rep01/LOSH_topfst.vcf.gz
+
+## Convert to plink for feems, and remove linked loci
+bash 5_vcf_to_plink.sh output/fst_splits/rep01/LOSH_topfst.vcf.gz input/feems/LOSH.feems_meta.csv input/feems/LOSH.top_pairwiseFST.second

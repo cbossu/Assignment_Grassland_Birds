@@ -70,6 +70,6 @@ write.csv(smry,   file.path(rep_dir, "top_fst_summary.csv"), row.names = FALSE)
 print(smry, row.names = FALSE)
 cat(sprintf("\n%d pairs; %d SNPs selected (union); %d flagged by >1 pair\n",
             nrow(smry), nrow(by_snp), sum(by_snp$n_pairs > 1)))
-cat("Subset with:\n  bcftools view -T", file.path(rep_dir, "top_fst_positions.txt"),
-    "input/pairwiseFST/losh.impute3.filtered.annotated.vcf.gz -Oz -o", file.path(rep_dir, "LOSH_topfst.vcf.gz"), "\n")
+cat("Subset with:\n  bcftools view -T", file.path(rep_dir, "top_fst_positions.train.txt"),
+    "input/pairwiseFST/losh.impute3.filtered.vcf.gz -Oz -o", file.path(rep_dir, "LOSH_topfst.vcf.gz"), "\n")
 
