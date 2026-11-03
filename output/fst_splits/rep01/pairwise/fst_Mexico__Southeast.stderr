@@ -1,0 +1,22 @@
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--gzvcf /scratch/alpine/cbossu@colostate.edu/LOSH/OriGen/Assignment_Grassland_Birds/input/pairwiseFST/losh.impute3.filtered.vcf.gz
+	--weir-fst-pop train_Mexico.txt
+	--weir-fst-pop train_Southeast.txt
+	--keep train_Mexico.txt
+	--keep train_Southeast.txt
+	--out pairwise/fst_Mexico__Southeast
+
+Using zlib version: 1.2.11
+Warning: Expected at least 2 parts in FORMAT entry: ID=GP,Number=3,Type=Float,Description="Estimated genotype probabilities (hom-allele1,het,hom-allele2) from Beagle 3.3.2">
+Warning: Expected at least 2 parts in FORMAT entry: ID=GP,Number=3,Type=Float,Description="Estimated genotype probabilities (hom-allele1,het,hom-allele2) from Beagle 3.3.2">
+Keeping individuals in 'keep' list
+After filtering, kept 40 out of 601 Individuals
+Outputting Weir and Cockerham Fst estimates.
+Weir and Cockerham mean Fst estimate: 0.12079
+Weir and Cockerham weighted Fst estimate: 0.21574
+After filtering, kept 358249 out of a possible 358249 Sites
+Run Time = 34.00 seconds
