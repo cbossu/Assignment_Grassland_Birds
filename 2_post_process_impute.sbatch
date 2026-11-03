@@ -16,7 +16,12 @@
 #SBATCH -t 24:00:00
 #################
 #number of threads you want to use
-#SBATCH --cpus-per-task 4
+#SBATCH --partition=acpu
+#SBATCH --qos=cpu-normal
+#SBATCH --nodes=1
+#SBATCH --account=csu88_alpine2
+#SBATCH --ntasks-per-node=4
+#SBATCH --mem=11G
 #################
 #get emailed about job BEGIN, END, and FAIL
 #SBATCH --mail-type=END

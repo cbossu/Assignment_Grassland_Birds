@@ -39,10 +39,8 @@ set -x
 source ~/.bashrc
 conda activate bcftools
 plink --bfile input/feems/LOSH.top_pairwiseFST.second.exclLD --aec --keep input/Breeding_ind.plink.txt \
-  --out output/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only --make-bed
+  --out input/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only --make-bed
 
 conda activate pcangsd
-pcangsd -p output/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only -o output/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only.k8.bed.pcangsd -t 4
-
-
+pcangsd -p input/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only -o output/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only.k8.bed.pcangsd -t 4
 
