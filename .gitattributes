@@ -1,0 +1,3 @@
+*.tif filter=lfs diff=lfs merge=lfs -text
+*second.exclLD.bed filter=lfs diff=lfs merge=lfs -text
+*second.exclLD.bim filter=lfs diff=lfs merge=lfs -text
