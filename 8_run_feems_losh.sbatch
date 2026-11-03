@@ -37,6 +37,8 @@ export OPENBLAS_NUM_THREADS=4
 GRID=/projects/cbossu@colostate.edu/feems/feems/data/grid_250.shp   # ~220 km spacing; grid_100 if breeding sites are dense
 GRID=/projects/cbossu@colostate.edu/feems/feems/data/grid_100.shp   # grid_100 if breeding sites are dense (test- LOSH has a lot of breeding samples)
 
+## --loo is leave one deme out
+## --loo_ind with --ind_folds is leave out an individual (I have 316 breeders)
 python scripts/feems_assign_nonbreeding.py \
   --bfile input/feems/LOSH.top_pairwiseFST.second.exclLD \
   --meta  input/feems/LOSH.feems_meta.csv \
@@ -45,10 +47,10 @@ python scripts/feems_assign_nonbreeding.py \
   --buffer 2 \
   --cv_folds 10 \
   --method point_mu \
-  --loo  --loo_ind  --ind_folds 10 \
+  --loo  --loo_ind  --ind_folds 316 \
   --outdir output/feems/feems_LOSH_fst_outer
 
-# Second run without the --loo or --loo_ind, using the T
+# Second run without the --loo or --loo_ind, using the T (temp) variable estimated in above LOO calibration script
 python scripts/feems_assign_nonbreeding.py \
   --bfile input/feems/LOSH.top_pairwiseFST.second.exclLD \
   --meta  input/feems/LOSH.feems_meta.csv \
@@ -57,7 +59,7 @@ python scripts/feems_assign_nonbreeding.py \
   --buffer 2 \
   --cv_folds 10 \
   --method point_mu \
-  --temp 251 \
+  --temp 251 \ 
   --outdir output/feems/feems_LOSH_fst_outer_T251
 
 

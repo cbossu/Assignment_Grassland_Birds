@@ -17,6 +17,7 @@ select_by   <- "n"      # "n" = top_n SNPs per pair; "quantile" = above top_q pe
 top_n       <- 2000
 top_q       <- 0.995    # 99.5th percentile
 min_fst     <- 0        # also require FST >= this (0 = off)
+vcf         <- "input/pairwiseFST/losh.impute3.filtered.vcf.gz"  # full imputed VCF (NOT the outlier subset)
 ## ----------------------------------------------------------------------------
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -71,5 +72,5 @@ print(smry, row.names = FALSE)
 cat(sprintf("\n%d pairs; %d SNPs selected (union); %d flagged by >1 pair\n",
             nrow(smry), nrow(by_snp), sum(by_snp$n_pairs > 1)))
 cat("Subset with:\n  bcftools view -T", file.path(rep_dir, "top_fst_positions.train.txt"),
-    "input/pairwiseFST/losh.impute3.filtered.vcf.gz -Oz -o", file.path(rep_dir, "LOSH_topfst.vcf.gz"), "\n")
+    " $vcf -Oz -o", file.path(rep_dir, "LOSH_topfst.vcf.gz"), "\n")
 
