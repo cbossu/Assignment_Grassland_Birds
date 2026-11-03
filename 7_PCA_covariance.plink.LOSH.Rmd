@@ -1,0 +1,109 @@
+---
+title: "PCA from PCAngsd"
+author: "CH Bossu"
+date: "2026-11-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Load libraries
+```{r}
+library(ggplot2)
+#install.packages(c("matrixStats", "Hmisc", "splines", "foreach", "doParallel", "fastcluster", "dynamicTreeCut", "survival")) 
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install(version = "3.16")
+#BiocManager::install(c("GO.db", "preprocessCore", "impute"))
+library(RColorBrewer)
+library(colorRamps)
+library(ggthemes)
+library(scales)
+library(tidyverse)
+```
+#Meta data
+```{r}
+library(openxlsx)
+meta<-read.xlsx("~/Dropbox/BGP/LOSH/LCWG/LOSH Master04212026.xlsx",sheet = 3,detectDates = T) %>% dplyr::rename(Sample=BGP_ID) %>% dplyr::select(-c(LibraryPlateName,LibraryPlatePosition,FullLibraryName,CityTown,Picogreen_ng_ul:ReRunPlatePosition,Notes))
+pop<-read.xlsx("~/Dropbox/BGP/LOSH/LCWG/winter_assignment/LOSH MasterHolden.xlsx",sheet=1)
+
+#meta %>% filter(Stage=="Breeding" & Missing >= 0.2) %>% distinct() %>% dplyr::select(Sample) %>% write.table("LOSH.gr.2missing.txt",row.names=F,quote=F,sep="\t",col.names = F)
+meta %>% group_by(State,K) %>% tally()
+
+# overall beagle imputed to vcf from beagle 3, combined subsetted
+covar<-read_delim("output/feems/LOSH.top_pairwiseFST.exclLD.Breed_only.k8.bed.pcangsd.cov",delim=" ",col_names = F)
+inds<-read_delim("input/feems/LOSH.top_pairwiseFST.exclLD.Breed_only.fam",delim=" ",col_names = F) %>% rename(Sample=X1) 
+
+
+
+meta2<-inds %>% left_join(meta) %>% rename(sample_name=Sample)
+eig <- eigen(covar,symm=T)
+eig$val <- eig$val/sum(eig$val)
+cat(signif(eig$val,digits=3)*100,"\n")
+
+PC <- as.data.frame(eig$vectors)
+colnames(PC) <- gsub("V","PC",colnames(PC))
+cbind(inds,PC)->pca1
+
+pca<-pca1 %>% left_join(meta) %>% 
+  dplyr::select(-c(PC7:PC316))%>% 
+  distinct() %>% mutate(State2=if_else(State %in% c("Baja California","Baja California Sur", "Sonora","Sinaloa"),"Baja&Sonora",if_else(State %in% c("Tlaxcala","Nuevo Leon","Guanajuato","Coahuila","Mexico City","Distrito Federal","Michoacan"),"Mexico",if_else(State %in% c("AZ","CA","CO","MT","OR","WA","UT","NM","NV"),"West_adaptive",if_else(State %in% c("SD","ND","KS","NE","Alberta","Saskatchewan","Manitoba"),"Plains",if_else(State %in% c("Ontario"),"Ontario",if_else(State %in% c("FL","NC","AL","SC"),"SE",if_else(Population %in% c("LOSH_AZ_1","LOSH_AZ_CA_1","LOSH_CA_3"),"Baja&Sonora",if_else(Population %in% c("LOSH_TX_1","LOSH_MS_1","LOSH_LA_1","LOSH_WV_1","LOSH_WV_2"),"Gulf_WV",if_else(Population %in% c("LOSH_TX_2"),"Plains",if_else(Population %in% c("LOSH_AR_2"),"AR",State))))))))))) %>% 
+  dplyr::select(Sample,Population,State,State2,K,everything())
+
+
+unique(pca$Population)
+unique(pca$State2)
+
+```
+
+#Put data in order
+```{r}
+unique(pca$K)
+
+# change the factor levels of sites!
+factor.levels.K <- c( "Southeast"  , "VA_WV_Gulf",
+                    "Plains", 
+                    "West_adaptive"   ,"SouthCA_Baja", "Mexico"  , "Solar",
+    "Central_noOnt"  ,"Ontario"    )      
+
+
+pca$K <- factor(x = pca$K,
+                                       levels = factor.levels.K)
+
+library(RColorBrewer)
+SE.cols <- brewer.pal(n = 9, name = "Purples")[c(2,4,8)]
+SE.colsK <- brewer.pal(n = 9, name = "Purples")[c(2,4)]
+
+West.cols <- brewer.pal(n = 9, name = "YlOrBr")[c(4,5,7,8)]
+Plains.cols <- brewer.pal(n = 9, name = "Greens")[4]
+Ontario.cols <- "#097586"
+Midwest.cols <- brewer.pal(n = 9, name = "Blues")[3:8]
+Midwest.colsK <- brewer.pal(n = 9, name = "Blues")[5]
+pca.color <- c(SE.colsK,Plains.cols,West.cols,Midwest.colsK,Ontario.cols)
+
+```
+
+
+```{r}
+library(ggrepel)
+##Initial Plot, with all related in
+
+pca  %>% 
+  ggplot(aes(PC1,-PC2,color=K))+
+  geom_point(size=2) +
+  geom_text_repel(data=subset(pca,K=="SouthCA_Baja" & -PC2 > -0.05),aes(label=State),size=2,max.overlaps = 50) +
+  #geom_text_repel(data=subset(pca,State=="IL" ),aes(label=State),size=2,max.overlaps = 50) +
+  scale_colour_manual(values=pca.color) + 
+  theme_bw()+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  theme(aspect.ratio = .75)+ theme(legend.key.size = unit(0.1, "cm"))  + 
+  xlab(paste0("PC1 (",signif(eig$val[1],digits=3)*100,"%)")) + 
+  ylab(paste0("PC2 (",signif(eig$val[2],digits=3)*100,"%)"))
+
+
+```
+
+```{r}
+ggsave('output/feems/LOSH.top_pairwiseFST.second.exclLD.Breed_only.pcangsd.color_K8.impute3.pcangsd.PC1_2.pdf')
+```
