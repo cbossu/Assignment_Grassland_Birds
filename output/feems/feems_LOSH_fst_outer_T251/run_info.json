@@ -1,0 +1,10 @@
+{
+  "lamb": 7.742636826811277,
+  "lamb_q": 10.0,
+  "method": "point_mu",
+  "n_breeding": 316,
+  "n_nonbreeding": 285,
+  "n_snps": 16695,
+  "n_demes": 239,
+  "n_sampled_demes": 59
+}
