@@ -1,0 +1,24 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+#Ignore large subsetted beagle file
+input/combined.subsetted.beagle.gz
+
+#Ignore large imputated vcf and gprobs files, they will be in dryad not github
+*gprobs.gz
+*vcf.gz
+*r2
+*geno.tsv.gz
+
+#Ignore files that can be created, the main plink bfile with breeding and nonbreeding birds will be on dryad
+LOSH.top_pairwiseFST.second.exclLD.*
+
+# Not used
+edgew.csv
+
+# Remove all weir_fst files
+train*txt
+*.weir.fst
+*stderr
